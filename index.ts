@@ -1,32 +1,14 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv"
 
-dotenv.config()
-import todoRoutes from "./routes/todoRoutes";
-import userRoutes from "./routes/userRoutes";
-
-const app = express()
+import dbConnection from "./config/databaseConnection";
+import log from "./utils/logger";
+import createServer from "./utils/server";
 
 
 
-app.use(express.json())
+const app:any = createServer();
 
-app.get("/",(req,res)=>{
-    res.status(200).json({
-        message:"api is working properly"
-    })
-})
+app.listen(process.env.PORT, async () => {
+  log.info(`App is running at http://localhost:${process.env.PORT}`);
 
-app.use("/api/v1/todos",todoRoutes)
-app.use("/api/v1/users",userRoutes)
-
-
-mongoose.connect(`${process.env.MONGODB_URL}`).then(()=>{
-    app.listen(3000, () => {
-        console.log("Server is running on port 3000 and connected to db")
-    })
-}).catch((error:any)=>console.log(error.messge))
-
-
-
+  await dbConnection()
+});

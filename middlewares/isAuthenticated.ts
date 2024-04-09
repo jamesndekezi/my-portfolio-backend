@@ -1,15 +1,17 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 
-import * as jwtService from "../services/jwt.service"
+import * as jwtServices from "../services/jwtServices.service"
 
 
-const isLoggedIn = async(req:any,res:Response,next:NextFunction)=>{
+
+
+export const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-        return res.status(400).json({ error: "No token provided 👎" });
+        return res.status(400).json({ error: "Soleil says token is missing 👎" });
     }
     try {
-        const user = await jwtService.decodeUserToken(token)
+        const user = await jwtServices.decodeUserToken(token)
         if (!user) {
             return res.status(401).json({ error: "Invalid token or user not found" });
         }
@@ -18,7 +20,4 @@ const isLoggedIn = async(req:any,res:Response,next:NextFunction)=>{
     } catch (error:any) {
         return res.status(401).json({ error: error.message });
     }
-}
-
-
-export default isLoggedIn
+};
